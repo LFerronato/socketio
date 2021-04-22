@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" href="./favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Socket.io</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous">
+    </script>
+
+</head>
+
+<body>
+
+  <div class="container">
+    <legend>sample chat using socket.io - by Lucas Ferronato</legend>
+    <div class="content">
+      <div id="messages-view">
+        <strong class="sender">Client x</strong>
+        <p class="message">Teste</p>
+
+      </div>
+      <div class="message-input-container">
+        <input type="text" name="input-message" id="input-message" alt="Digite nova mensagem"
+          placeholder="Digite nova mensagem">
+        <button type="button" id="button-message" onclick="sendMessage()">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Opção de conectar usando um botão -->
+  <!-- <button id="join">Join</button> -->
+  <!-- <script>
+    let socket
+    document.getElementById('join').addEventListener('click', () => {
+      if (!socket) {
+        socket = new io('http://localhost:3333')
+      }
+    })
+  </script> -->
+  <script>
+    let socket
+    if (!socket) {
+      socket = new io('http://localhost:3333')
+    }
+
+    const msgView = document.getElementById('messages-view')
+    const msgInput = document.getElementById('input-message')
+
+    let lastSender = ''
+
+    socket.on('all-messages', (msgs) => {
+      msgView.innerHTML = ''
+      msgs.forEach(m => {
+        if (lastSender === m.sender) {
+          msgView.innerHTML += `
+            <p class="message">${m.message}</p>
+          `;
+        } else {
+          msgView.innerHTML += `
+            <strong class="sender">Client ${m.sender}</strong>
+            <p class="message">${m.message}</p>
+          `;
+        }
+        lastSender = m.sender
+      })
+
+      msgView.scrollTop = msgView.scrollHeight
+    })
+
+    msgInput.addEventListener("keydown", function (e) {
+      if (e.code.endsWith("Enter")) sendMessage()
+    })
+
+    function sendMessage() {
+      if (!!msgInput.value) {
+        socket.emit('message', msgInput.value)
+        msgInput.value = ''
+        msgView.scrollTop = msgView.scrollHeight
+      }
+    }
+  </script>
+
+</body>
+
+</html>
