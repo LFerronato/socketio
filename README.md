@@ -10,9 +10,10 @@ Uso de um arquivo separado para lidar com funções do Socket.io
   handleSocket(io)
 ```
 
-## Run
+## To Run
 ```sh
   yarn dev
 ```
 
 # Demo
+![](./demo/chat-demo.gif)
